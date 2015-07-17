@@ -26,6 +26,8 @@ setInterval(function(){
 
 3. `[minecraftusername] joined/left king of the rock. Now there is 1/25 players.`
 
+4. `null (If there is nothing to report.)` 
+
 
 
 ###Requirements:
@@ -36,7 +38,7 @@ setInterval(function(){
 <br>
 ###**mcstatus(options,minecraftusername);**
 <br>
-#####options:<br><br>
+#####Options:<br><br>
 
 ```
 
@@ -59,7 +61,7 @@ The ipaddress is the address of the server you wish to get notified about
 <br><br>
 The id is whatever you would like to call the item in order to make it unique from any other item you might pass through the function.
 <br><br>
-#####minecraftusername:
+#####Username:
 <br>
 The username is whatever your minecraft username is. I thought that it would be pretty annoying to get notified if you were already on the server and could see who joined and who left.
 <br>
