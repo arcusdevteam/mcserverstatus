@@ -1,6 +1,6 @@
 # mcstatus.js documentation
 
-A javascript function for changes in a server's playerlist. <br>
+A javascript function for checking on changes in a minecraft server's playerlist. <br>
 
 #####JS:
 
