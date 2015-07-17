@@ -1,8 +1,8 @@
 # mcstatus.js documentation
 
-*A javascript function for changes in a server's playerlist. *<br>
+A javascript function for changes in a server's playerlist. <br>
 
-#####JS:<br><br>
+#####JS:
 
 ```js
 var item = {
@@ -48,17 +48,17 @@ setInterval(function(){
 
 ```
 **"servername":**
-<br>
+<br><br>
 The servername is the name for the server which the function will use in it's response. This is useful if you have 2 different servers and you need to be notified by both without getting confused by which is which.
-<br>
+<br><br>
 **"ipaddress":**
-<br>
+<br><br>
 The ipaddress is the address of the server you wish to get notified about
-<br>
+<br><br>
 **"id":**
-<br>
+<br><br>
 The id is whatever you would like to call the item in order to make it unique from any other item you might pass through the function.
-<br>
+<br><br>
 #####Username:
 <br>
 The username is whatever your minecraft username is. I thought that it would be pretty annoying to get notified if you were already on the server and could see who joined and who left.
