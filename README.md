@@ -36,7 +36,7 @@ setInterval(function(){
 <br>
 ###**mcstatus(options,minecraftusername);**
 <br>
-#####Options:<br><br>
+#####options:<br><br>
 
 ```
 
@@ -59,7 +59,7 @@ The ipaddress is the address of the server you wish to get notified about
 <br><br>
 The id is whatever you would like to call the item in order to make it unique from any other item you might pass through the function.
 <br><br>
-#####Username:
+#####minecraftusername:
 <br>
 The username is whatever your minecraft username is. I thought that it would be pretty annoying to get notified if you were already on the server and could see who joined and who left.
 <br>
