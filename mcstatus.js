@@ -1,257 +1,229 @@
-var item = {
-    "servername":"king of the rock",
-    "ipaddress":"198.24.164.162:34009",
-    "id":"c4b313e01f049881"
-};
-console.log(mcstatus(item,'usernme'));
-function mcstatus(item,username) {
-  window.sessionStorage.removeItem('msg');
-  var Notified = window.sessionStorage.getItem('notified' + item.id);
-  var first = window.sessionStorage.getItem('first' + item.id);
-  var oldList = window.sessionStorage.getItem('oldList' + item.id);
-  var oldResponse = window.sessionStorage.getItem('oldResponse' + item.id);
-  var Too = window.sessionStorage.getItem('too' + item.id);
-  var Run = window.sessionStorage.getItem('run' + item.id);
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+
+var mcstatus = function mcstatus(ip,name,callback) {
+  //creates a global variable data if none is found
+  if (typeof data === 'undefined') {
+    data = {};
+  }
+
+  // sends an XML request to mcping.net and sets global variable response to the xml.reponseText:
   var xml = new XMLHttpRequest();
   xml.onreadystatechange = function() {
-      if (xml.readyState == 4 && xml.status == 200) {
-          window.sessionStorage.setItem('response' + item.id,xml.responseText);
+
+    // tests for a good response:
+    if (xml.readyState == 4 && xml.status == 200) {
+      response = JSON.parse(xml.responseText);
+
+      // tests for errors:
+      if (response.sample === null && response.online > 0 || response.max === 0) {
+        try {
+          if (response.sample === null && response.online > 0) throw 'Unfortunately, ' + name + ' is hiding their playerlist.';
+          if (response.max === 0) throw 'Could not find the ip for "' + name + '" or the server is not running.';
+        }
+        catch(err) {
+
+          // if there is no error data:
+          if (data === undefined || data !== undefined && data[name + 'error'] === undefined && data[name + 'error'] !== null) {
+            callback(err);
+            if (data === undefined) {
+              data = {};
+            }
+            data[name + 'error'] = err;
+          }
+
+          // if there is error data:
+          else {
+
+            // if the error has already been reported:
+            if (data[name + 'error'] !== err) {
+              callback(err);
+            }
+            data[name + 'error'] = err;
+          }
+        }
       }
+
+      // if there are no errors:
       else {
-        return;
+
+        // since there are no errors, setting error data to false:
+        if (data !== undefined && data[name + 'error'] !== undefined && data[name + 'error'] !== false) {
+          data[name + 'error'] = false;
+        }
+
+        // if there are players online:
+        if (response.sample !== null && response.online < 13) {
+
+          // defining the variables for the "for" statements:
+          playerlistarray = [];
+          playerliststring = '';
+
+          // converts only the names of the players on the server into an array (playerlistarray):
+          for (i = 0; i < response.sample.length; i++) {
+            playerlistarray.push(response.sample[i].name);
+          }
+
+          // converts the playerlistarray variable into a string with correct grammar:
+          for (i = 0; i < playerlistarray.length; i++) {
+            if (playerlistarray.length == 1) {
+              playerliststring += playerlistarray[0];
+            }
+            else if (playerlistarray.length == 2) {
+              if (i+1 === playerlistarray.length) {
+                playerliststring += ' and ' + playerlistarray[1];
+              }
+              else {
+                playerliststring += playerlistarray[0];
+              }
+            }
+            else {
+              if (i+1 === playerlistarray.length) {
+                playerliststring += 'and ' + playerlistarray[i];
+              }
+              else {
+                playerliststring += playerlistarray[i] + ', ';
+              }
+            }
+          }
+        }
+
+        // if there are not players online:
+        else {
+          if (response.online === 0) {
+            playerlistarray = [];
+          }
+          else if (response.online > 12) {
+            callback('The server has too many players online to get an accurate list of players.');
+            return;
+          }
+        }
+
+        // checks for old data:
+        if (data === undefined || data !== undefined && data[name] === undefined && data[name] !== null) {
+
+          // callback if there are no players online and there is no data:
+          if (playerlistarray.length === 0) {
+            callback('Currently no players are playing on ' + name + '.');
+          }
+
+          // callback if there is one player online and there is no data:
+          else if (response.online === 1) {
+            callback('Currently ' + playerliststring + ' is playing on ' + name + '.');
+          }
+          else {
+            callback('Currently ' + playerliststring + ' are playing on ' + name + '.');
+          }
+
+          data[name] = playerlistarray;
+        }
+
+        // if there is data:
+        else {
+
+          // if someone joined:
+          if (response.online - data[name].length > 0) {
+
+            // if someone joined and one person is online:
+            if (response.online == 1) {
+              callback(capitalize(getChangeList(data[name],playerlistarray,'join')) + ' joined ' + name + '. Now there are 1/' + response.max + '.');
+            }
+
+            // if someone joined and there is more than one person online:
+            else {
+              callback(capitalize(getChangeList(data[name],playerlistarray,'join')) + ' joined ' + name + '. Now there are ' + response.online + '/' + response.max + ' players on the server, including ' + playerliststring + '.');
+            }
+          }
+
+          // if someone left:
+          if (response.online - data[name].length < 0) {
+
+            if (playerlistarray === null) {
+              var playerlistarray = [];
+            }
+
+            // if someone left and now there are no players online:
+            if (response.online === 0) {
+              callback(capitalize(getChangeList(data[name],playerlistarray,'leave')) + ' left ' + name + '. Now there are 0/' + response.max + ' players on the server, so there are no players on the server.');
+            }
+
+            // if someone left and now there is only one player online:
+            else if (response.online == 1) {
+              callback(capitalize(getChangeList(data[name],playerlistarray,'leave')) + ' left ' + name + '. Now there is 1/' + response.max + ' players on the server, and only ' + playerliststring + ' online.');
+            }
+
+            // if someone left and there is more than one person on the server:
+            else {
+              callback(capitalize(getChangeList(data[name],playerlistarray,'leave')) + ' left ' + name + '. Now there are ' +  response.online + '/' + response.max + ' players on the server, including ' + playerliststring + '.');
+            }
+          }
+
+          // stores data:
+          data[name] = playerlistarray;
+        }
       }
+    }
   }
-  var url = 'http://mcping.net/api/' + item.ipaddress + '/online,max,sample,strippedmotd';
+  var url = 'http://mcping.net/api/' + ip + '/online,max,sample,strippedmotd';
   xml.open('GET', url, 'true');
   xml.send();
-  var response = JSON.parse(window.sessionStorage.getItem('response' + item.id));
-  if (response !== '' && response !== undefined) {
-    if (response.max === 0) {
-        if (Run !== 'true') {
-            window.sessionStorage.setItem('msg','We could not find the ip for ' + item.servername + '. This probably means that the server is not running.');
-        }
-        window.sessionStorage.setItem('run' + item.id, true);
-    }
-    else {
-        if (response == undefined) {
 
-        }
-        if (response.sample === null && response.online > 0) {
-            if (Too !== 'true') {
-                window.sessionStorage.setItem('msg','There are too many players on ' + item.servername + ' for us to notify you. Try using a server with less players online.');
-            }
-            window.sessionStorage.setItem('too' + item.id, true);
+
+  // functions:
+
+  function getChangeList(oldList,newList,c) {
+
+    // function to get the differences between two arrays:
+    function diffArray(a,b) {
+      var seen = [], diff = [];
+      for (var i = 0; i < b.length; i++)
+          seen[b[i]] = true;
+      for (i = 0; i < a.length; i++)
+          if (!seen[a[i]])
+              diff.push(a[i]);
+      return diff;
+    }
+
+    // if the function was used for a leave request:
+    if (c == 'leave') {
+      var changelistarray = diffArray(oldList,newList);
+    }
+    // if the funciton was used for a join request:
+    if (c == 'join') {
+      changelistarray = diffArray(newList,oldList);
+    }
+    changeliststring = '';
+
+    // for loop to generate a string of the players that have left or joined:
+    for (i = 0; i < changelistarray.length; i++) {
+      if (changelistarray.length == 1) {
+        changeliststring += changelistarray[0];
+      }
+      else if (changelistarray.length == 2) {
+        if (i+1 === changelistarray.length) {
+          changeliststring += ' and ' + changelistarray[1];
         }
         else {
-            var players = '';
-            var playerlist = '';
-            if (response.sample === null) {
-                var users = '';
-                var playerlist = '';
-            }
-            if (response.sample !== null) {
-                for (i = 0; i < response.sample.length; i++) {
-                    playerlist += response.sample[i].name + ' ';
-                    if (response.sample.length === 1) {
-                        players += response.sample[i].name;
-                    }
-                    if (response.sample.length === 2) {
-                        if (i+1 === response.sample.length) {
-                            players += 'and ' + response.sample[i].name;
-                        }
-                        else {
-                            players += response.sample[i].name + ' ';
-                        }
-                    }
-                    if (response.sample.length > 2) {
-                        if (i+1 === response.sample.length) {
-                            players += 'and ' + response.sample[i].name;
-                        }
-                        else {
-                            players += response.sample[i].name + ', ';
-                        }
-                    }
-                    if (response.sample[i].name === username) {
-                        var send = false;
-                    }
-                }
-                if (send == false) {
-                    var send = 'true';
-                    if (Notified !== 'true') {
-                        window.sessionStorage.setItem('msg','You are on ' + item.servername + ', so we are not going to notify you from now on.');
-                    }
-                    window.sessionStorage.setItem('notified' + item.id, true);
-                    window.sessionStorage.setItem('too' + item.id, false);
-                }
-            }
-            if (players == '') {
-            }
-            else {
-            }
-            var users = players;
-            var online = response.online;
-            var joinlist = '';
-            var leavelist = '';
-            if (oldList !== null && oldResponse !== null && oldList !== undefined) {
-                var difference = +online - +oldResponse;
-                var players = playerlist.split(' ');
-                var oldlist = oldList.split(' ');
-                if (difference > 0) {
-                    if (oldList || oldList == 0) {
-                        var joined = diffArray(players, oldlist);
-                        var jlist = joined;
-                        for (i = 0; i < jlist.length; i++) {
-                            if (jlist.length === 1) {
-                                joinlist += jlist[i];
-                            }
-                            if (jlist.length === 2) {
-                                if (i+1 === jlist.length) {
-                                    joinlist += 'and ' + jlist[i];
-                                }
-                                else {
-                                    joinlist += jlist[i] + ' ';
-                                }
-                            }
-                            if (jlist.length > 2) {
-                                if (i+1 === jlist.length) {
-                                    joinlist += 'and ' + jlist[i];
-                                }
-                                else {
-                                    joinlist += jlist[i] + ', ';
-                                }
-                            }
-                        }
-                        if (online === 1) {
-                            window.sessionStorage.setItem('msg',joinlist + ' joined ' + item.servername + '. Now there are ' + online + '/' + response.max + ' players.');
-                            var oldResponse = online;
-                            var oldList = playerlist;
-                            window.sessionStorage.setItem('notified' + item.id, false);
-                            window.sessionStorage.setItem('first' + item.id, true);
-                            window.sessionStorage.setItem('run' + item.id, false);
-                            window.sessionStorage.setItem('too' + item.id, false);
-                            window.sessionStorage.setItem('oldList' + item.id, oldList);
-                            window.sessionStorage.setItem('oldResponse' + item.id, oldResponse);
-                        }
-                        else {
-                            window.sessionStorage.setItem('msg',joinlist + ' joined ' + item.servername + '. Now there are ' + online + '/' + response.max + ' players, including ' + users);
-                            var oldResponse = online;
-                            var oldList = playerlist;
-                            window.sessionStorage.setItem('notified' + item.id, false);
-                            window.sessionStorage.setItem('first' + item.id, true);
-                            window.sessionStorage.setItem('run' + item.id, false);
-                            window.sessionStorage.setItem('too' + item.id, false);
-                            window.sessionStorage.setItem('oldList' + item.id, oldList);
-                            window.sessionStorage.setItem('oldResponse' + item.id, oldResponse);
-                        }
-                        var oldList = playerlist;
-                        var oldResponse = online;
-                    }
-                    else {
-                        var oldList = playerlist;
-                    }
-                }
-                else if (difference < 0) {
-                    if (oldList) {
-                        var left = diffArray(oldlist, players);
-                        var llist = left;
-                        for (i = 0; i < llist.length; i++) {
-                            if (llist.length === 1) {
-                                leavelist += llist[i] + ' ';
-                            }
-                            if (llist.length === 2) {
-                                if (i+1 === llist.length) {
-                                    leavelist += 'and ' + llist[i];
-                                }
-                                else {
-                                    leavelist += llist[i] + ' ';
-                                }
-                            }
-                            if (llist.length > 2) {
-                                if (i+1 === llist.length) {
-                                    leavelist += 'and ' + llist[i];
-                                }
-                                else {
-                                    leavelist += llist[i] + ', ';
-                                }
-                            }
-                        }
-                        if (online === 0) {
-                            window.sessionStorage.setItem('msg',leavelist + 'left ' + item.servername + '. Now there are 0/' + response.max + ' players, and there are no players online');
-                            var oldResponse = online;
-                            var oldList = playerlist;
-                            window.sessionStorage.setItem('notified' + item.id, false);
-                            window.sessionStorage.setItem('first' + item.id, true);
-                            window.sessionStorage.setItem('run' + item.id, false);
-                            window.sessionStorage.setItem('too' + item.id, false);
-                            window.sessionStorage.setItem('oldList' + item.id, oldList);
-                            window.sessionStorage.setItem('oldResponse' + item.id, oldResponse);
-                        }
-                        else {
-                            window.sessionStorage.setItem('msg',leavelist + ' left ' + item.servername + '. Now there are ' + online + '/' + response.max + ' players, including ' + users);
-                            var oldResponse = online;
-                            var oldList = playerlist;
-                            window.sessionStorage.setItem('notified' + item.id, false);
-                            window.sessionStorage.setItem('first' + item.id, true);
-                            window.sessionStorage.setItem('run' + item.id, false);
-                            window.sessionStorage.setItem('too' + item.id, false);
-                            window.sessionStorage.setItem('oldList' + item.id, oldList);
-                            window.sessionStorage.setItem('oldResponse' + item.id, oldResponse);
-                        }
-                        var oldList = playerlist;
-                        var oldResponse = online;
-                    }
-                    else {
-                        var oldList = playerlist;
-                    }
-                }
-                else {
-                    var oldResponse = online;
-                    var oldList = playerlist;
-                    if (first !== 'true') {
-                        if (online == 0) {
-                            window.sessionStorage.setItem('msg','Currently no players are playing on ' + item.servername + '.');
-                        }
-                        if (online == 1) {
-                            window.sessionStorage.setItem('msg','Currently ' + users + ' is playing on ' + item.servername + '.');
-                        }
-                        else if (online > 1) {
-                            window.sessionStorage.setItem('msg','Currently ' + users + ' are playing on ' + item.servername + '.');
-                        }
-                    }
-                    window.sessionStorage.setItem('notified' + item.id, false);
-                    window.sessionStorage.setItem('first' + item.id, true);
-                    window.sessionStorage.setItem('run' + item.id, false);
-                    window.sessionStorage.setItem('too' + item.id, false);
-                    window.sessionStorage.setItem('oldList' + item.id, oldList);
-                    window.sessionStorage.setItem('oldResponse' + item.id, oldResponse);
-                }
-            }
-            else {
-                var oldResponse = online;
-                var oldList = playerlist;
-                if (first !== 'true') {
-                    if (online == 0) {
-                        window.sessionStorage.setItem('msg','Currently no players are playing on ' + item.servername + '.');
-                    }
-                    if (online == 1) {
-                        window.sessionStorage.setItem('msg','Currently ' + users + ' is playing on ' + item.servername + '.');
-                    }
-                    else if (online > 1) {
-                        window.sessionStorage.setItem('msg','Currently ' + users + ' are playing on ' + item.servername + '.');
-                    }
-                }
-                window.sessionStorage.setItem('notified' + item.id, false);
-                window.sessionStorage.setItem('first' + item.id, true);
-                window.sessionStorage.setItem('run' + item.id, false);
-                window.sessionStorage.setItem('too' + item.id, false);
-                window.sessionStorage.setItem('oldList' + item.id, oldList);
-                window.sessionStorage.setItem('oldResponse' + item.id, oldResponse);
+          changeliststring += changelistarray[0];
+        }
+      }
+      else {
+        if (i+1 === changelistarray.length) {
+          changeliststring += 'and ' + changelistarray[i];
+        }
+        else {
+          changeliststring += changelistarray[i] + ', ';
         }
       }
     }
+
+    // returns the string of changes:
+    return changeliststring;
   }
-  else {
-    window.sessionStorage.setItem('msg','McPing.net is down. Try again later');
+
+  //function to make the first letter capitalized:
+  function capitalize(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
-  return window.sessionStorage.getItem('msg');
 }
+
+exports.mcstatus = mcstatus;
