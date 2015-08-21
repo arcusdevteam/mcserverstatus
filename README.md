@@ -4,7 +4,7 @@ A javascript function for checking changes in a minecraft server's list of playe
 
 ##Usage
 ```js
-var mcstatus = require('mcstatus').mcstatus;
+var mcstatus = require('mcserverstatus').mcstatus;
 
 var ip = 'senious.mcph.co'; // the server ip
 
@@ -12,7 +12,7 @@ var name = 'senious survival' // name can be anything
 
 mcstatus(ip, name, function response(response) {
   console.log(response);
-}
+});
 ```
 The response is in the form of a string and might look something like:
 
@@ -31,10 +31,7 @@ If you run it once, it will remember that the server is offline, and not bug you
 
 ###Without npm:
 
-Use this URL for production (uglified): [https://cdn.rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.min.js](https://cdn.rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.min.js)
-
-Use this URL for dev/testing (prettified):
-[https://rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.js](https://rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.js)
+`<script src="`[https://rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.js](https://rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.js)`"></script`
 
 ##Demo
 
