@@ -1,4 +1,4 @@
-# mcstatus.js documentation
+# mcserverstatus
 
 A javascript function for checking changes in a minecraft server's list of players without using query or a custom plugin.
 
@@ -27,4 +27,15 @@ If you run it once, it will remember that the server is offline, and not bug you
 
 ###With npm:
 
+`npm install mcserverstatus`
+
 ###Without npm:
+
+Use this URL for production (uglified): [https://cdn.rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.min.js](https://cdn.rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.min.js)
+
+Use this URL for dev/testing (prettified):
+[https://rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.js](https://rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.js)
+
+##Demo
+
+Coming Soon...
