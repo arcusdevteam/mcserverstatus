@@ -1,10 +1,15 @@
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 var mcstatus = function mcstatus(ip,name,callback) {
-  //creates a global variable data if none is found
+
+  //creates a variable 'data' if not already defined:
   if (typeof data === 'undefined') {
     data = {};
   }
+
+  //defines other variables:
+  var playerlistarray = [], playerliststring = '';
+
 
   // sends an XML request to mcping.net and sets global variable response to the xml.reponseText:
   var xml = new XMLHttpRequest();
@@ -17,28 +22,28 @@ var mcstatus = function mcstatus(ip,name,callback) {
       // tests for errors:
       if (response.sample === null && response.online > 0 || response.max === 0) {
         try {
-          if (response.sample === null && response.online > 0) throw 'Unfortunately, ' + name + ' is hiding their playerlist.';
+          if (response.sample === null && response.online > 0) throw 'Unfortunately, ' + name + ' is hiping their playerlist.';
           if (response.max === 0) throw 'Could not find the ip for "' + name + '" or the server is not running.';
         }
         catch(err) {
 
           // if there is no error data:
-          if (data === undefined || data !== undefined && data[name + 'error'] === undefined && data[name + 'error'] !== null) {
+          if (data === undefined || data !== undefined && data[ip + 'error'] === undefined && data[ip + 'error'] !== null) {
             callback(err);
             if (data === undefined) {
               data = {};
             }
-            data[name + 'error'] = err;
+            data[ip + 'error'] = err;
           }
 
           // if there is error data:
           else {
 
             // if the error has already been reported:
-            if (data[name + 'error'] !== err) {
+            if (data[ip + 'error'] !== err) {
               callback(err);
             }
-            data[name + 'error'] = err;
+            data[ip + 'error'] = err;
           }
         }
       }
@@ -47,16 +52,12 @@ var mcstatus = function mcstatus(ip,name,callback) {
       else {
 
         // since there are no errors, setting error data to false:
-        if (data !== undefined && data[name + 'error'] !== undefined && data[name + 'error'] !== false) {
-          data[name + 'error'] = false;
+        if (data !== undefined && data[ip + 'error'] !== undefined && data[ip + 'error'] !== false) {
+          data[ip + 'error'] = false;
         }
 
         // if there are players online:
         if (response.sample !== null && response.online < 13) {
-
-          // defining the variables for the "for" statements:
-          playerlistarray = [];
-          playerliststring = '';
 
           // converts only the names of the players on the server into an array (playerlistarray):
           for (i = 0; i < response.sample.length; i++) {
@@ -89,17 +90,14 @@ var mcstatus = function mcstatus(ip,name,callback) {
 
         // if there are not players online:
         else {
-          if (response.online === 0) {
-            playerlistarray = [];
-          }
-          else if (response.online > 12) {
+          if (response.online > 12) {
             callback('The server has too many players online to get an accurate list of players.');
             return;
           }
         }
 
         // checks for old data:
-        if (data === undefined || data !== undefined && data[name] === undefined && data[name] !== null) {
+        if (data === undefined || data !== undefined && data[ip] === undefined && data[ip] !== null) {
 
           // callback if there are no players online and there is no data:
           if (playerlistarray.length === 0) {
@@ -114,55 +112,55 @@ var mcstatus = function mcstatus(ip,name,callback) {
             callback('Currently ' + playerliststring + ' are playing on ' + name + '.');
           }
 
-          data[name] = playerlistarray;
+          data[ip] = playerlistarray;
         }
 
         // if there is data:
         else {
 
           // if someone joined:
-          if (response.online - data[name].length > 0) {
+          if (response.online - data[ip].length > 0) {
 
             // if someone joined and one person is online:
             if (response.online == 1) {
-              callback(capitalize(getChangeList(data[name],playerlistarray,'join')) + ' joined ' + name + '. Now there are 1/' + response.max + '.');
+              callback(capitalize(getChangeList(data[ip],playerlistarray,'join')) + ' joined ' + name + '. Now there are 1/' + response.max + '.');
             }
 
             // if someone joined and there is more than one person online:
             else {
-              callback(capitalize(getChangeList(data[name],playerlistarray,'join')) + ' joined ' + name + '. Now there are ' + response.online + '/' + response.max + ' players on the server, including ' + playerliststring + '.');
+              callback(capitalize(getChangeList(data[ip],playerlistarray,'join')) + ' joined ' + name + '. Now there are ' + response.online + '/' + response.max + ' players on the server, including ' + playerliststring + '.');
             }
           }
 
           // if someone left:
-          if (response.online - data[name].length < 0) {
+          if (response.online - data[ip].length < 0) {
 
             if (playerlistarray === null) {
-              var playerlistarray = [];
+              playerlistarray = [];
             }
 
             // if someone left and now there are no players online:
             if (response.online === 0) {
-              callback(capitalize(getChangeList(data[name],playerlistarray,'leave')) + ' left ' + name + '. Now there are 0/' + response.max + ' players on the server, so there are no players on the server.');
+              callback(capitalize(getChangeList(data[ip],playerlistarray,'leave')) + ' left ' + name + '. Now there are 0/' + response.max + ' players on the server, so there are no players on the server.');
             }
 
             // if someone left and now there is only one player online:
             else if (response.online == 1) {
-              callback(capitalize(getChangeList(data[name],playerlistarray,'leave')) + ' left ' + name + '. Now there is 1/' + response.max + ' players on the server, and only ' + playerliststring + ' online.');
+              callback(capitalize(getChangeList(data[ip],playerlistarray,'leave')) + ' left ' + name + '. Now there is 1/' + response.max + ' players on the server, and only ' + playerliststring + ' online.');
             }
 
             // if someone left and there is more than one person on the server:
             else {
-              callback(capitalize(getChangeList(data[name],playerlistarray,'leave')) + ' left ' + name + '. Now there are ' +  response.online + '/' + response.max + ' players on the server, including ' + playerliststring + '.');
+              callback(capitalize(getChangeList(data[ip],playerlistarray,'leave')) + ' left ' + name + '. Now there are ' +  response.online + '/' + response.max + ' players on the server, including ' + playerliststring + '.');
             }
           }
 
           // stores data:
-          data[name] = playerlistarray;
+          data[ip] = playerlistarray;
         }
       }
     }
-  }
+  };
   var url = 'http://mcping.net/api/' + ip + '/online,max,sample,strippedmotd';
   xml.open('GET', url, 'true');
   xml.send();
@@ -170,7 +168,7 @@ var mcstatus = function mcstatus(ip,name,callback) {
 
   // functions:
 
-  function getChangeList(oldList,newList,c) {
+  function getChangeList(oldList,newList,method) {
 
     // function to get the differences between two arrays:
     function diffArray(a,b) {
@@ -184,11 +182,11 @@ var mcstatus = function mcstatus(ip,name,callback) {
     }
 
     // if the function was used for a leave request:
-    if (c == 'leave') {
-      var changelistarray = diffArray(oldList,newList);
+    if (method== 'leave') {
+      changelistarray = diffArray(oldList,newList);
     }
     // if the funciton was used for a join request:
-    if (c == 'join') {
+      if (method== 'join') {
       changelistarray = diffArray(newList,oldList);
     }
     changeliststring = '';
@@ -224,6 +222,6 @@ var mcstatus = function mcstatus(ip,name,callback) {
   function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
-}
+};
 
 exports.mcstatus = mcstatus;

@@ -2,7 +2,7 @@
 
 A javascript function for checking changes in a minecraft server's list of players without using query or a custom plugin.
 
-##Usage
+## Usage
 ```js
 var mcstatus = require('mcserverstatus').mcstatus;
 
@@ -23,16 +23,16 @@ is offline, but it knows not to be annoying.
 
 If you run it once, it will remember that the server is offline, and not bug you again.
 
-##Install
+## Install
 
-###With npm:
+### With npm:
 
 `npm install mcserverstatus`
 
-###Without npm:
+### Without npm:
 
 `<script src="`[https://rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.js](https://rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.js)`"></script`
 
-##Demo
+## Demo
 
 Coming Soon...

@@ -1,15 +1,14 @@
 {
   "name": "mcserverstatus",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A javascript function for checking changes in a minecraft server's list of players without using query or a custom plugin.",
-  "author": "arcusdevteam <arcusdevteam@gmail.com>",
   "main": "mcstatus.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/arcusdevteam/mcserverstatus"
-  },
-  "bugs": {
-    "url": "https://github.com/arcusdevteam/mcserverstatus/issues"
+    "url": "git+https://github.com/arcusdevteam/mcserverstatus.git"
   },
   "keywords": [
     "query",
@@ -20,6 +19,12 @@
     "alert",
     "update",
     "playerlist",
-    "players",
-  ]
+    "players"
+  ],
+  "author": "arcusdevteam <arcusdevteam@gmail.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/arcusdevteam/mcserverstatus/issues"
+  },
+  "homepage": "https://github.com/arcusdevteam/mcserverstatus#readme"
 }
