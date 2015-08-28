@@ -26,5 +26,8 @@
   "bugs": {
     "url": "https://github.com/arcusdevteam/mcserverstatus/issues"
   },
-  "homepage": "https://github.com/arcusdevteam/mcserverstatus#readme"
+  "homepage": "https://github.com/arcusdevteam/mcserverstatus#readme",
+  "dependencies": {
+    "xmlhttprequest": "^1.7.0"
+  }
 }
