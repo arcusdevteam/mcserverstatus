@@ -68,4 +68,4 @@ Then if a player joins the server and the function is run again:
 
 ### Without npm:
 
-`<script src="`[https://rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.min.js](https://rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.min.js)`"></script`
+`<script src="`[https://rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.min.js](https://rawgit.com/arcusdevteam/mcserverstatus/master/mcstatus.min.js)`"></script>`
