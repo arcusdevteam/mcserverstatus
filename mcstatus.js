@@ -260,10 +260,3 @@ var mcstatus = function mcstatus(options,callback) {
 if (typeof exports !== 'undefined') {
   exports.mcstatus = mcstatus;
 }
-setInterval(function(){
-  mcstatus({
-    ip: 'enderman.biz'
-  },function(response){
-    console.log(response);
-  });
-},1000);

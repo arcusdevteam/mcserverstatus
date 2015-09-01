@@ -1,6 +1,6 @@
 {
   "name": "mcserverstatus",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "A javascript function for checking changes in a minecraft server's list of players without using query or a custom plugin.",
   "main": "mcstatus.js",
   "scripts": {
