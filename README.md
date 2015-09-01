@@ -4,7 +4,7 @@ A javascript function for checking changes in a minecraft server's list of playe
 
 ## Usage
 ```js
-var mcstatus = require('mcserverstatus').mcstatus;
+var mcstatus = require('mcserverstatus').mcstatus; // only include if using npm
 
 var ip = 'senious.mcph.co'; // the server ip
 
