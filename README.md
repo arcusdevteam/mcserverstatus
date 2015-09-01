@@ -54,7 +54,7 @@ setInterval(function(){
 #### Response:
 When first ran it returns:
 
-`Currently [list of players] is playing on [server name].`
+`Currently [list of players] are playing on [server name].`
 
 Then if a player joins the server and the function is run again:
 
