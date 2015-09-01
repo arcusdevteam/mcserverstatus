@@ -1,4 +1,6 @@
-var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+if (typeof exports !== 'undefined') {
+  var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+}
 
 var mcstatus = function mcstatus(ip,name,callback) {
 
@@ -223,5 +225,9 @@ var mcstatus = function mcstatus(ip,name,callback) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 };
-
-exports.mcstatus = mcstatus;
+if (typeof exports !== 'undefined') {
+  exports.mcstatus = mcstatus;
+}
+mcstatus('198.24.164.162:34009','koth',function(response){
+  console.log(response);
+});
