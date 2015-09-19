@@ -6,6 +6,7 @@ var rename = require('gulp-rename');
 gulp.task('js', function() {
     return gulp.src('./mcstatus.js')
         .pipe(uglify())
+        .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('./'));
 });
 
