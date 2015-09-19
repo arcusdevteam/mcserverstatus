@@ -7,3 +7,7 @@ gulp.task('js', function() {
         .pipe(watch('./mcstatus.js'))
         .pipe(gulp.dest('./mcstatus.min.js'))
 });
+
+gulp.task('default', function() {
+    gulp.start(['js']);
+});
