@@ -4,8 +4,12 @@ var uglify = require('gulp-uglify');
 
 gulp.task('js', function() {
     return gulp.src('./mcstatus.js')
-        .pipe(watch('./mcstatus.js'))
-        .pipe(gulp.dest('./mcstatus.min.js'))
+        .pipe(uglify())
+        .pipe(gulp.dest('./'));
+});
+
+gulp.task('js-watch', function() {
+
 });
 
 gulp.task('default', function() {
