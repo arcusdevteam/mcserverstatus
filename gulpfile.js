@@ -11,9 +11,11 @@ gulp.task('js', function() {
 });
 
 gulp.task('js-watch', function() {
-
+    watch('./mcstatus.js', function() {
+        gulp.start(['js']);
+    });
 });
 
 gulp.task('default', function() {
-    gulp.start(['js']);
+    gulp.start(['js', 'js-watch']);
 });
