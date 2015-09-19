@@ -1,6 +1,7 @@
 var gulp   = require('gulp');
 var watch  = require('gulp-watch');
 var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
 
 gulp.task('js', function() {
     return gulp.src('./mcstatus.js')
