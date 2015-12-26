@@ -1,4 +1,4 @@
-if (exports) {
+if (typeof exports !== 'undefined') {
   var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 }
 
