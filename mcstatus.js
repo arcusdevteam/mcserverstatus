@@ -195,7 +195,7 @@ var mcstatus = function mcstatus(options,callback) {
           }
         }
       };
-      var url = 'http://mcping.net/api/' + ip + '/online,max,sample,strippedmotd';
+      var url = 'https://mcping.net/api/' + ip + '/online,max,sample,strippedmotd';
       xml[i].open('GET', url, 'true');
       xml[i].send();
     })(i);
