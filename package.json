@@ -28,12 +28,6 @@
   },
   "homepage": "https://github.com/arcusdevteam/mcserverstatus#readme",
   "dependencies": {
-    "xmlhttprequest": "^1.7.0"
-  },
-  "devDependencies": {
-    "gulp": "^3.9.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^1.4.1",
-    "gulp-watch": "^4.3.5"
+    "minecraft-protocol": "^1.5.1"
   }
 }
